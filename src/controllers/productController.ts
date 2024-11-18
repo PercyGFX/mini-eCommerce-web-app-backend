@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import { Request, Response } from "express";
 import ProductModel from "../models/ProductModel.js";
+import Joi from "joi";
 
 //////////////////////////////// get all products ////////////////////////////////
 export const getAllproducts = async (req: Request, res: Response) => {
@@ -15,9 +16,34 @@ export const getAllproducts = async (req: Request, res: Response) => {
 
 //////////////////////////////// add new product ////////////////////////////////
 
+const productSchema = Joi.object({
+  sku: Joi.string().required(),
+  name: Joi.string().required(),
+  quantity: Joi.number().min(1).required(),
+  description: Joi.string().required(),
+  mainImage: Joi.string().required(),
+  images: Joi.array().items(Joi.string()),
+});
+
 export const Addproduct = async (req: Request, res: Response) => {
   try {
-    res.status(200).json({ message: "Success", data: "data" });
+    // check validations
+    const { error, value } = productSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    // create new product
+    const { images, mainImage, ...rest } = value;
+
+    const productData = {
+      ...rest,
+      mainImage,
+      otherImages: images || [],
+    };
+
+    const product = await ProductModel.create(productData);
+    res.status(201).json({ message: "Product created", data: product });
   } catch (error: any) {
     console.error("Error fetching categories:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
