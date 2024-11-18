@@ -5,6 +5,7 @@ import multer from "multer";
 import {
   getAllproducts,
   Addproduct,
+  editProduct,
 } from "../controllers/productController.js";
 
 // multer configuration
@@ -30,5 +31,9 @@ productRoutes.post(
 // get all products
 
 productRoutes.get("/all", getAllproducts);
+
+// edit product
+
+productRoutes.put("/edit-product", editProduct);
 
 export default productRoutes;

@@ -61,3 +61,41 @@ export const Addproduct = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 };
+
+//////////////////////////////// edit product ////////////////////////////////
+
+const EditSchema = Joi.object({
+  id: Joi.string().required(),
+  sku: Joi.string().required(),
+  name: Joi.string().required(),
+  quantity: Joi.number().min(1).required(),
+  description: Joi.string().required(),
+});
+
+export const editProduct = async (req: Request, res: Response) => {
+  try {
+    // validations
+    const { error, value } = EditSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    const { id, sku, name, quantity, description } = value;
+
+    const product = await ProductModel.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      id,
+      { sku, name, quantity: Number(quantity), description },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Product updated", data: updatedProduct });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || "Internal Server Error" });
+  }
+};
