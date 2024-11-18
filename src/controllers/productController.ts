@@ -7,7 +7,18 @@ import Joi from "joi";
 //////////////////////////////// get all products ////////////////////////////////
 export const getAllproducts = async (req: Request, res: Response) => {
   try {
-    res.status(200).json({ message: "Success", data: "data" });
+    const products = await ProductModel.find();
+    res.status(200).json({
+      message: "Success",
+      count: products.length,
+      data: products,
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    res.status(200).json({ message: "Success", data: products });
   } catch (error: any) {
     console.error("Error fetching categories:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
