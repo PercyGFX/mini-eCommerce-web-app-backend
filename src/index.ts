@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import { ConnectToMongoDB } from "./utils/database.js";
 import productRoutes from "./routes/productRoutes.js";
+import path from "path";
 
 // cors
 app.use(
@@ -14,6 +15,9 @@ app.use(
     credentials: true,
   })
 );
+
+// uploads folder
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // middlewares //
 app.use(express.urlencoded({ extended: false }));

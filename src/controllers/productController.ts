@@ -8,17 +8,16 @@ import Joi from "joi";
 export const getAllproducts = async (req: Request, res: Response) => {
   try {
     const products = await ProductModel.find();
-    res.status(200).json({
-      message: "Success",
-      count: products.length,
-      data: products,
-    });
 
     if (products.length === 0) {
       return res.status(404).json({ message: "No products found" });
     }
 
-    res.status(200).json({ message: "Success", data: products });
+    res.status(200).json({
+      message: "Success",
+      count: products.length,
+      data: products,
+    });
   } catch (error: any) {
     console.error("Error fetching categories:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
@@ -33,30 +32,32 @@ const productSchema = Joi.object({
   quantity: Joi.number().min(1).required(),
   description: Joi.string().required(),
   mainImage: Joi.string().required(),
-  images: Joi.array().items(Joi.string()),
+  otherImages: Joi.array().items(Joi.string()),
 });
 
 export const Addproduct = async (req: Request, res: Response) => {
   try {
-    // check validations
-    const { error, value } = productSchema.validate(req.body);
+    const mainImage = req.files?.["mainImage"]?.[0]?.filename;
+    const otherImages =
+      req.files?.["otherImages"]?.map((file) => file.filename) || [];
+
+    const productData = {
+      sku: req.body.sku,
+      name: req.body.name,
+      quantity: Number(req.body.quantity),
+      description: req.body.description,
+      mainImage,
+      otherImages,
+    };
+
+    const { error } = productSchema.validate(productData);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    // create new product
-    const { images, mainImage, ...rest } = value;
-
-    const productData = {
-      ...rest,
-      mainImage,
-      otherImages: images || [],
-    };
-
     const product = await ProductModel.create(productData);
     res.status(201).json({ message: "Product created", data: product });
   } catch (error: any) {
-    console.error("Error fetching categories:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 };
