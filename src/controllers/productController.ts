@@ -9,14 +9,14 @@ export const getAllproducts = async (req: Request, res: Response) => {
   try {
     const products = await ProductModel.find();
 
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
+    // if (products.length === 0) {
+    //   return res.status(404).json({ message: "No products found" });
+    // }
 
     res.status(200).json({
-      message: "Success",
+      message: products.length === 0 ? "No products found" : "Success",
       count: products.length,
-      data: products,
+      data: products.length === 0 ? [] : products,
     });
   } catch (error: any) {
     console.error("Error fetching categories:", error.message);
