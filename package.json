@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start:ts": "tsc -w",
-    "start:js": "nodemon dist/index.js",
+    "start:js": "nodemon build/index.js",
     "start": "concurrently npm:start:*"
   },
   "keywords": [],
