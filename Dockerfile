@@ -38,7 +38,7 @@ WORKDIR /app
 # Copy built application from the build stage
 COPY --from=build /app/build ./build
 #COPY --from=build /app/.env ./
-COPY --from=build /app/prisma ./prisma
+#COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/package.json ./
 COPY --from=build /app/package-lock.json ./
 
