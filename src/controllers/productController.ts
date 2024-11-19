@@ -132,3 +132,34 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message || "Internal Server Error" });
   }
 };
+
+//////////////////////////////// get single product ////////////////////////////////
+const getSingleProductSchema = Joi.object({
+  productId: Joi.string().required(),
+});
+
+export const getSingleProduct = async (req: Request, res: Response) => {
+  try {
+    // Validate
+    const { error } = getSingleProductSchema.validate({
+      productId: req.params.productId,
+    });
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    const product = await ProductModel.findById(req.params.productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      message: "Product found successfully",
+      data: product,
+    });
+  } catch (error: any) {
+    console.error("Error fetching product:", error.message);
+    res.status(500).json({ error: error.message || "Internal Server Error" });
+  }
+};

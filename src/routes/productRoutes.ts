@@ -7,6 +7,7 @@ import {
   Addproduct,
   editProduct,
   deleteProduct,
+  getSingleProduct,
 } from "../controllers/productController.js";
 
 // multer configuration
@@ -39,5 +40,9 @@ productRoutes.put("/edit-product", editProduct);
 
 // delete product
 productRoutes.delete("/delete", deleteProduct);
+
+// get single product
+
+productRoutes.get("/get-product/:productId", getSingleProduct);
 
 export default productRoutes;
