@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import { ConnectToMongoDB } from "./utils/database.js";
 import productRoutes from "./routes/productRoutes.js";
+import favouriteRoutes from "./routes/favouriteRoutes.js";
 import path from "path";
 
 // cors
@@ -30,6 +31,7 @@ ConnectToMongoDB(process.env.MONGO_URI);
 // routes
 
 app.use("/product", productRoutes);
+app.use("/favourite", favouriteRoutes);
 
 app.get("/", (req, res) => {
   res.send("Express Server is Working");
