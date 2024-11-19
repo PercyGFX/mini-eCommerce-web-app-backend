@@ -37,9 +37,10 @@ const productSchema = Joi.object({
 
 export const Addproduct = async (req: Request, res: Response) => {
   try {
-    const mainImage = req.files?.["mainImage"]?.[0]?.filename;
+    const mainImage = (req.files as any)?.["mainImage"]?.[0]?.filename;
     const otherImages =
-      req.files?.["otherImages"]?.map((file) => file.filename) || [];
+      (req.files as any)?.["otherImages"]?.map((file: any) => file.filename) ||
+      [];
 
     const productData = {
       sku: req.body.sku,
